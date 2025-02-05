@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeraBox Downloader</title>
+</head>
+<body>
+    <h1>TeraBox Downloader</h1>
+    <form id="terabox-form">
+        <label for="terabox-url">Enter TeraBox URL: </label>
+        <input type="text" id="terabox-url" placeholder="Enter TeraBox URL" required>
+        <button type="submit">Get Direct Link</button>
+    </form>
+    
+    <p id="direct-link"></p>
+
+    <script>
+        document.getElementById('terabox-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const url = document.getElementById('terabox-url').value;
+            
+            fetch('http://localhost:5000/get_link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.direct_link) {
+                    document.getElementById('direct-link').innerHTML = `Download link: <a href="${data.direct_link}" target="_blank">${data.direct_link}</a>`;
+                } else {
+                    document.getElementById('direct-link').textContent = data.error;
+                }
+            })
+            .catch(error => {
+                document.getElementById('direct-link').textContent = "Error: " + error;
+            });
+        });
+    </script>
+</body>
+</html>
